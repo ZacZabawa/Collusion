@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ site.assets.css_path | append: '/main.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ site.assets.css_path | append: '/post-styles.css' | relative_url }}">
+    
+    <!-- JavaScript -->
+    <script src="{{ site.assets.js_path | append: '/main.js' | relative_url }}"></script>
+    <script src="{{ site.assets.js_path | append: '/graph.js' | relative_url }}"></script>
+</head>
+<body>
+    {{ content }}
+</body>
+</html> 

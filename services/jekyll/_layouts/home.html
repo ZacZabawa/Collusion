@@ -1,0 +1,86 @@
+---
+body_class: homepage
+include_bundle_js: true
+---
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+
+  {%- include head.html -%}
+
+  <body class="{{ page.body_class }}">
+    <div id="loading-screen">
+      <video autoplay loop muted playsinline id="loading-video">
+        Your browser does not support the video tag.
+    </video>
+    <img src="assets/svg/landing.png" id="loading-logo"/>
+  </div>
+    {%- include header.html -%}
+
+    <main class="page-content" aria-label="Content">
+      <div class="home">
+        {%- if page.title -%}
+          <h1 class="page-heading">{{ page.title }}</h1>
+        {%- endif -%}
+      
+        {{ content }}
+        
+        <div id="graph-header"></div>      
+        <div class="container">
+          <div class="graph-container">
+            <div class="graph" id="graph2"></div>
+          </div>
+          <div class="skill-container">
+            <h2>Skills</h2>
+              <div class="tag-list" id="tag-cloud-container">
+              <!-- Tag elements go here -->
+              </div>
+          </div>
+      </div>
+        <!-- <div id="tag-cloud-container"></div> -->
+      
+      
+          
+      
+        {%- if site.posts.size > 0 -%}
+          <h2 id="post-list-heading" class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
+          <ul class="post-list">
+            {%- for post in site.posts -%}
+            <li>
+              {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+              <span class="post-meta">{{ post.date | date: date_format }}</span>
+              <h3>
+                <a class="post-link" href="{{ post.url | relative_url }}">
+                  {{ post.title | escape }}
+                </a>
+              </h3>
+              {%- if site.show_excerpts -%}
+                {{ post.excerpt }}
+              {%- endif -%}
+            </li>
+            {%- endfor -%}
+          </ul>
+      
+          <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+        {%- endif -%}
+      </div>
+      
+    </main>
+
+    {%- include footer.html -%}
+    <!-- Include jQuery from a CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{{ '/dist/bundle.js' | relative_url }}" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+  const loadingScreen = document.getElementById('loading-screen');
+  if (loadingScreen) {
+    loadingScreen.addEventListener('click', () => {
+      loadingScreen.style.display = 'none';
+    });
+  }
+});</script>
+  </body>
+
+</html>
+

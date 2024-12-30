@@ -1,0 +1,19 @@
+.tag-cloud-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  
+  .tag-cloud-container .tag {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .tag-cloud-container .tag:hover {
+    background-color: #4a4747;
+  }

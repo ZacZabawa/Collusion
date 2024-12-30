@@ -1,0 +1,18 @@
+---
+layout: default
+---
+ <!-- In _layouts/tag.html -->
+ <pre>{{ page | jsonify }}</pre>
+
+
+<div class="container">
+    <h1>Posts tagged with "{{ page.tag }}"</h1>
+    <ul>
+        {% for post in site.tags[page.tag] %}
+        <li>
+            <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+            <p>{{ post.excerpt }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

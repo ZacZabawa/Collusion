@@ -1,0 +1,14 @@
+FROM node:16
+
+WORKDIR /app
+
+# Copy parser files
+COPY obsidian-parser/package*.json ./
+RUN npm install
+
+COPY obsidian-parser .
+
+# Create directories
+RUN mkdir -p /vault /shared
+
+CMD ["node", "index.js"] 

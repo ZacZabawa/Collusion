@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration version="30">
+    <folder id="mrl9p-vvxsg"
+            label="Obsidian Vault"
+            path="/var/syncthing/Vault"
+            type="sendreceive"
+            rescanIntervalS="3600"
+            fsWatcherEnabled="true"
+            fsWatcherDelayS="10"
+            ignorePerms="false"
+            autoNormalize="true">
+        <filesystemType>basic</filesystemType>
+        <device id="default"></device>
+        <minDiskFree unit="%">1</minDiskFree>
+        <versioning>
+            <type>simple</type>
+            <param key="keep" val="5"/>
+        </versioning>
+    </folder>
+</configuration> 

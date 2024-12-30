@@ -1,0 +1,10 @@
+[Unit]
+Description=SSL Certificate Renewal Timer
+
+[Timer]
+OnCalendar=*-*-01 00:00:00  # Run monthly on the 1st at midnight
+RandomizedDelaySec=86400    # Add random delay up to 24 hours
+Persistent=true
+
+[Install]
+WantedBy=timers.target 

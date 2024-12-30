@@ -1,0 +1,29 @@
+/* Browser adjustments */
+* {
+    text-size-adjust: 100%;
+}
+
+/* Grid properties */
+.grid-container {
+    gap: 1rem;
+}
+
+/* Transitions */
+.transition-element {
+    transition: all 0.3s ease;
+}
+
+/* Focus styles */
+:focus {
+    outline: none;
+}
+
+/* Placeholder styles */
+::placeholder {
+    color: #999;
+}
+
+/* Column gaps */
+.column-gap {
+    column-gap: 1rem;
+} 

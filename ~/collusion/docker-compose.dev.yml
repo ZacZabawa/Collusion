@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  syncthing:
+    extends:
+      file: docker-compose.prod.yml
+      service: syncthing
+    volumes:
+      - /c/Users/zzaba/obsidian/Zabauhaus:/var/syncthing/Vault  # Windows path
+
+  parser:
+    extends:
+      file: docker-compose.prod.yml
+      service: parser
+    volumes:
+      - /c/Users/zzaba/obsidian/Zabauhaus:/vault:ro
+    environment:
+      - NODE_ENV=development
+
+  jekyll:
+    extends:
+      file: docker-compose.prod.yml
+      service: jekyll
+    ports:
+      - "4000:4000"
+    environment:
+      - JEKYLL_ENV=development
+
+  nginx:
+    extends:
+      file: docker-compose.prod.yml
+      service: nginx
+    volumes:
+      - ./services/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+
+networks:
+  core-network:
+  web-network: 

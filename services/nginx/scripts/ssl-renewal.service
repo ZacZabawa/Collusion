@@ -1,0 +1,14 @@
+[Unit]
+Description=SSL Certificate Renewal Service
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/collusion
+ExecStart=/bin/bash services/nginx/scripts/renew-ssl.sh
+User=root
+StandardOutput=append:/var/log/ssl-renewal.log
+StandardError=append:/var/log/ssl-renewal.log
+
+[Install]
+WantedBy=multi-user.target 

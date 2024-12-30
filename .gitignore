@@ -1,0 +1,30 @@
+# Content
+services/jekyll/_posts/*
+services/jekyll/assets/media/*
+services/jekyll/assets/images/*
+
+# Build outputs
+_site/
+.jekyll-cache/
+.sass-cache/
+
+# Dependencies
+node_modules/
+vendor/
+.bundle/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+services/nginx/ssl/*
+vault/*
+
+# Data files
+shared/*.json
+
+
+# Logs and temp files
+*.log
+.DS_Store
+Thumbs.db

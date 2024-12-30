@@ -1,0 +1,44 @@
+title: Zabauhaus | FUNctionalism
+email: zzdesigns@protonmail.com
+description: >- 
+  This website is an experiment in visual archival analytics beyond conventional portfolio websites.
+  It strives for a real-time and accurate reflection of the collaborative and messy nature of idea creation and execution.
+
+# Development settings
+port: 4000
+baseurl: ""
+url: "https://zabauha.us"
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Asset paths
+assets:
+  media_path: /assets/media
+  images_path: /assets/images
+  svg_path: /assets/images/svg
+  js_path: /assets/js
+  css_path: /assets/css
+  
+# Media directories
+media:
+  full: /assets/media/full
+  thumbs: /assets/media/thumbs
+  
+# Data files (works in both dev and Docker)
+data_dir: _data
+
+# Collections
+collections:
+  organizations:
+    output: true
+  functions:
+    output: true
+  projects:
+    output: true 
+
+# Production settings
+environment: production 

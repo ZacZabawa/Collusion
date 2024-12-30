@@ -1,0 +1,187 @@
+---
+layout: default
+--- 
+<head>
+  <!-- Load jQuery first -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  
+  <!-- Then load nanogallery2 -->
+  <link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/jquery.nanogallery2.min.js"></script>
+  
+  <!-- Your custom styles -->
+  <link rel="stylesheet" href="{{ '/assets/css/post-styles.css' | relative_url }}">
+</head>
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h4>Project: </h4>
+    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+    
+    {% if page.tags %}
+    <div class="tag-cloud-container">
+      {% for tag in page.tags %}
+        <a href="{{ site.baseurl }}/tags/{{ tag | slugify }}/" class="post-tag">{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+
+  {% if page.mainVid %}
+  <div class="main-video-container">
+    <video controls width="100%">
+      <source src="{{ site.media.full | append: '/' | append: page.mainVid | relative_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  {% endif %}
+
+  <div class="post-content e-content" itemprop="articleBody">
+    {{ content }}
+    
+    <!-- Gallery container -->
+    <div ID="nanogallery2" class="nanogallery">
+      <div class="ngy2_loader">
+        <div class="ngy2_loaderSpin"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    jQuery(document).ready(function () {
+      const postTitle = {{ page.title | jsonify }};
+      const mainVid = {{ page.mainVid | jsonify }};
+      
+      const mediaFiles = [];
+      const processedFiles = new Set();
+      
+      console.log('Processing post:', postTitle);
+      
+      // Helper function to normalize strings for comparison
+      function normalizeString(str) {
+        return str.toLowerCase()
+                 .replace(/[''"]/g, '') // Remove quotes
+                 .replace(/[!@#$%^&*(),.?":{}|<>]/g, '') // Remove special chars
+                 .replace(/\s+/g, '-') // Replace spaces with hyphens
+                 .replace(/-+/g, '-') // Replace multiple hyphens with single
+                 .trim();
+      }
+      
+      // Calculate normalized post title once
+      const normalizedPostTitle = normalizeString(postTitle);
+      console.log('Normalized post title:', normalizedPostTitle);
+      
+      // Process mainVid if it exists
+      if (mainVid) {
+        const hasExtension = /\.(mp4|jpg|png|gif)$/i.test(mainVid);
+        const baseFileName = mainVid;
+        const isVideo = mainVid.toLowerCase().includes('video');
+        const extension = isVideo ? (hasExtension ? '' : '.mp4') : (hasExtension ? '' : '.jpg');
+        
+        const fullPath = `{{ '/assets/media/full/' | append: baseFileName | append: extension | relative_url }}`;
+        console.log('Adding mainVid:', fullPath);
+        
+        mediaFiles.push({
+          src: fullPath,
+          srct: fullPath,
+          title: mainVid,
+          kind: isVideo ? 'video' : 'image',
+          description: ' ',
+          ID: 0
+        });
+        processedFiles.add(mainVid.toLowerCase());
+      }
+      
+      // Process other media files
+      {% for file in site.static_files %}
+        {% if file.path contains site.media.full %}
+          {% assign file_name = file.path | split: '/' | last %}
+          {% assign file_title = file_name | split: '_' | first %}
+          {% capture normalized_file_title %}{{ file_title | downcase | replace: "'", "" | replace: "'", "" | replace: "!", "" | replace: " ", "-" | replace: "--", "-" }}{% endcapture %}
+          
+          console.log('Comparing:', {
+            post: normalizedPostTitle,
+            file: {{ normalized_file_title | jsonify }},
+            original: {{ file_name | jsonify }}
+          });
+          
+          {% if normalized_file_title == page.title | downcase | replace: "'", "" | replace: "'", "" | replace: "!", "" | replace: " ", "-" | replace: "--", "-" %}
+            {% assign filePath = file.path | relative_url %}
+            {% assign fileExt = file.extname | downcase %}
+            
+            console.log('Found match:', {{ filePath | jsonify }});
+            
+            if (!processedFiles.has({{ file_name | downcase | jsonify }})) {
+              const isVideo = ['.mp4', '.webm', '.ogg', '.mov'].includes({{ fileExt | jsonify }});
+              mediaFiles.push({
+                src: {{ site.media.full | append: '/' | append: file_name | jsonify }},
+                srct: {{ site.media.thumbs | append: '/' | append: file_name | jsonify }},
+                title: {{ file_name | jsonify }},
+                kind: isVideo ? 'video' : 'image',
+                description: ' ',
+                ID: mediaFiles.length
+              });
+              processedFiles.add({{ file_name | downcase | jsonify }});
+            }
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      console.log('Final mediaFiles array:', mediaFiles);
+
+      // Initialize gallery only if we have media files
+      if (mediaFiles.length > 0) {
+        console.log('Initializing gallery with:', mediaFiles);
+        
+        try {
+          jQuery("#nanogallery2").nanogallery2('destroy');
+          const gallery = jQuery("#nanogallery2").nanogallery2({
+            items: mediaFiles,
+            itemsBaseURL: '',
+            
+            // Debug mode
+            debugMode: true,
+            
+            // Gallery Settings
+            galleryDisplayMode: 'standard',
+            galleryMaxRows: 999,
+            galleryPaginationMode: 'rectangles',
+            
+            // Thumbnail Settings
+            thumbnailHeight: 250,
+            thumbnailWidth: 'auto',
+            thumbnailGutterWidth: 10,
+            thumbnailGutterHeight: 10,
+            
+            // Events
+            fnGalleryRenderStart: function() {
+              console.log('Gallery render started');
+            },
+            fnGalleryRenderEnd: function() {
+              console.log('Gallery render ended');
+              jQuery("#nanogallery2").nanogallery2('resize');
+              jQuery('.ngy2_loader').hide();
+            },
+            fnGalleryObjectModelBuilt: function() {
+              console.log('Gallery model built');
+            },
+            fnGalleryLayoutApplied: function() {
+              console.log('Gallery layout applied');
+            }
+          });
+        } catch (error) {
+          console.error('Error initializing gallery:', error);
+          jQuery('.ngy2_loader').hide();
+        }
+      } else {
+        console.log('No media files found');
+        jQuery('.ngy2_loader').hide();
+      }
+    });
+  </script>
+</article>
+
+
+
+
+

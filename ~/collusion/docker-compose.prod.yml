@@ -1,0 +1,88 @@
+version: '3.8'
+services:
+  # Core Services
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: collusion-syncthing
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /c/Users/zzaba/obsidian/Zabauhaus:/var/syncthing/Vault  # Windows path
+      - ./services/syncthing/config:/var/syncthing/config
+      - ./services/syncthing/data:/var/syncthing/data
+    ports:
+      - "8384:8384"  # Web UI
+      - "22000:22000"  # TCP file transfers
+      - "21027:21027/udp"  # Discovery broadcasts
+    restart: unless-stopped
+    networks:
+      - core-network
+
+  parser:
+    build: 
+      context: ./services/parser
+      dockerfile: Dockerfile
+    volumes:
+      - ./vault:/vault:ro
+      - ./shared:/shared
+    environment:
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - redis
+      - rabbitmq
+    networks:
+      - core-network
+
+  jekyll:
+    build: 
+      context: ./services/jekyll
+      dockerfile: Dockerfile
+    volumes:
+      - ./shared:/shared:ro
+      - ./services/jekyll/_site:/srv/jekyll/_site
+    environment:
+      - JEKYLL_ENV=production
+    depends_on:
+      - parser
+    networks:
+      - web-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./services/nginx/sites-available:/etc/nginx/sites-available:ro
+      - ./services/nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - ./services/nginx/ssl:/etc/nginx/ssl:ro
+      - ./services/jekyll/_site:/usr/share/nginx/html:ro
+    depends_on:
+      - jekyll
+    networks:
+      - web-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - core-network
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - core-network
+
+networks:
+  core-network:
+    driver: bridge
+  web-network:
+    driver: bridge 

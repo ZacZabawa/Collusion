@@ -61,7 +61,7 @@ fs.watch('post_urls.json', (eventType, filename) => {
   if (eventType === 'change') {
     console.log(`post_urls.json has been updated. Recreating hierarchy...`);
     delete require.cache[require.resolve('./post_urls.json')]; // Clear the require cache
-    postUrls = require('./post_urls.json'); // Reload the post URLs
+    postUrls = require('../../../post_urls.json'); // Reload the post URLs
     loadAndCreateHierarchy(); // Recreate the hierarchy
   }
 });
